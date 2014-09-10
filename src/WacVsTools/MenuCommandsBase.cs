@@ -24,7 +24,6 @@ namespace Microsoft.WacVsTools
             _shell = shell;
         }
 
-
         protected bool? ShowDialog(Window window)
         {
             try

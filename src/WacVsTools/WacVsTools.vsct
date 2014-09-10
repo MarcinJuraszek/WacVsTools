@@ -3,15 +3,23 @@
   <Extern href="stdidcmd.h"/>
   <Extern href="vsshlids.h"/>
   <Commands package="guidWacVsToolsPkg">
+    <Menus>
+      <Menu guid="guidWacVsToolsCmdSet" id="MyMenuGroup" priority="0x0600" type="Menu">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_MM_TOOLSADDINS"/>
+        <Strings>
+          <ButtonText>WAC</ButtonText>
+          <CommandName>WAC</CommandName>
+        </Strings>
+      </Menu>
+    </Menus>
     <Groups>
-      <Group guid="guidWacVsToolsCmdSet" id="MyMenuGroup" priority="0x0600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+      <Group guid="guidWacVsToolsCmdSet" id="attachToWacProcesMenuGroup" priority="0x0100">
+        <Parent guid="guidWacVsToolsCmdSet" id="MyMenuGroup"/>
       </Group>
     </Groups>
     <Buttons>
-      <Button guid="guidWacVsToolsCmdSet" id="cmdidAttachToWacProcess" priority="0x0100" type="Button">
-        <Parent guid="guidWacVsToolsCmdSet" id="MyMenuGroup"/>
-        <Icon guid="guidImages" id="bmpPic2" />
+      <Button guid="guidWacVsToolsCmdSet" id="cmdidAttachToWacProcess" priority="0x0300" type="Button">
+        <Parent guid="guidWacVsToolsCmdSet" id="attachToWacProcesMenuGroup"/>
         <Strings>
           <ButtonText>Attach to WAC Process...</ButtonText>
         </Strings>
@@ -29,6 +37,7 @@
     <GuidSymbol name="guidWacVsToolsCmdSet" value="{86bdeca8-eca7-4b32-9a36-9e896c38ea7a}">
 
       <IDSymbol name="MyMenuGroup" value="0x1020" />
+      <IDSymbol name="attachToWacProcesMenuGroup" value="0x1100"/>
       <IDSymbol name="cmdidAttachToWacProcess" value="0x0100" />
     </GuidSymbol>
 

@@ -20,7 +20,11 @@ namespace Microsoft.WacVsTools.AttachToWacProcess
     {
         public Dictionary<string, Func<string, string>> WacProcessCommandLineToAppNameResolvers =
             new Dictionary<string, Func<string, string>> {
-                { "w3wp.exe", GetAppNameFromW3wpProcessCommandLine }
+#if DEBUG
+                { "svchost.exe", (c) => null },
+#else
+                { "w3wp.exe", GetAppNameFromW3wpProcessCommandLine },
+#endif
             };
 
         public AttachToWacProcessMenuCommands(DTE2 dte, OleMenuCommandService mcs, IVsUIShell shell)
@@ -52,7 +56,7 @@ namespace Microsoft.WacVsTools.AttachToWacProcess
         private IEnumerable<int> ShowWacProcessesList(IEnumerable<WacProcessInfo> processes)
         {
             var model = new AttachToWacProcessDialogModel() { Processes = processes.ToList() };
-            var window = new AttachToWacProcessDialog(model) { WindowStartupLocation = WindowStartupLocation.CenterOwner };
+            var window = new AttachToWacProcessDialog(model);
             var result = ShowDialog(window);
 
             return result.HasValue && result.Value ? model.SelectedProcesses : Enumerable.Empty<int>();

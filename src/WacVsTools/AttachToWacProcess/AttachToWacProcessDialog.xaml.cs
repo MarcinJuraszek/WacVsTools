@@ -26,6 +26,8 @@ namespace Microsoft.WacVsTools.AttachToWacProcess
             this.DataContext = model;
 
             InitializeComponent();
+
+            NoRecordsError.IsEnabled = model.Processes.Count == 0;
         }
 
         private void Processes_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -33,6 +35,8 @@ namespace Microsoft.WacVsTools.AttachToWacProcess
             selectedProcesses.AddRange(e.AddedItems.Cast<WacProcessInfo>().Select(x => x.Id));
             foreach (var removedItem in e.RemovedItems.Cast<WacProcessInfo>())
                 selectedProcesses.Remove(removedItem.Id);
+
+            btnOk.IsEnabled = selectedProcesses.Count > 0;
         }
 
         private void btnOk_Click(object sender, RoutedEventArgs e)
