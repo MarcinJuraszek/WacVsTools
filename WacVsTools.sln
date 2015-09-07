@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30324.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WacVsTools", "src\WacVsTools\WacVsTools.csproj", "{C1A6C850-4383-4AB1-B8B6-80F13962FDA2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WacVsTools.Core", "src\WacVsTools.Core\WacVsTools.Core.csproj", "{B6D87720-D855-4E62-94E5-EC1BC820C727}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WacVsTools.VS2015", "src\WacVsTools.VS2015\WacVsTools.VS2015.csproj", "{15DA858A-2D81-4A0E-AA25-981C70A93D56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C1A6C850-4383-4AB1-B8B6-80F13962FDA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1A6C850-4383-4AB1-B8B6-80F13962FDA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1A6C850-4383-4AB1-B8B6-80F13962FDA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1A6C850-4383-4AB1-B8B6-80F13962FDA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6D87720-D855-4E62-94E5-EC1BC820C727}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6D87720-D855-4E62-94E5-EC1BC820C727}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6D87720-D855-4E62-94E5-EC1BC820C727}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6D87720-D855-4E62-94E5-EC1BC820C727}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15DA858A-2D81-4A0E-AA25-981C70A93D56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15DA858A-2D81-4A0E-AA25-981C70A93D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15DA858A-2D81-4A0E-AA25-981C70A93D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15DA858A-2D81-4A0E-AA25-981C70A93D56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
