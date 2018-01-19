@@ -8,7 +8,7 @@
             <RowDefinition Height="46*"/>
         </Grid.RowDefinitions>
         <DataGrid x:Name="Processes" AutoGenerateColumns="False" ItemsSource="{Binding Processes}"
-                  SelectionMode="Extended" SelectionChanged="Processes_SelectionChanged"
+                  SelectionMode="Extended" SelectionChanged="Processes_SelectionChanged" MouseDoubleClick="Processes_MouseDoubleClick"
                   CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" RowDetailsVisibilityMode="Collapsed">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id, Mode=OneWay}" />

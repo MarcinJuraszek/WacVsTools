@@ -18,7 +18,7 @@ namespace WacVsTools.Core.AttachToWacProcess
 
             InitializeComponent();
 
-            NoRecordsError.IsEnabled = model.Processes.Count == 0;
+            NoRecordsError.Visibility = model.Processes.Count == 0 ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void Processes_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -41,5 +41,20 @@ namespace WacVsTools.Core.AttachToWacProcess
             DialogResult = false;
             Close();
         }
-    }
+
+		private void Processes_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			var grid = sender as DataGrid;
+			var selectedProcessInfo = grid.SelectedItem as WacProcessInfo;
+
+			if (selectedProcessInfo != null)
+			{
+				selectedProcesses.Clear();
+				selectedProcesses.Add(selectedProcessInfo.Id);
+
+				DialogResult = true;
+				Close();
+			}
+		}
+	}
 }
