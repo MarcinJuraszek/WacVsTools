@@ -8,17 +8,17 @@
 
     public partial class AttachToWacProcessDialog : Window
     {
-        private AttachToWacProcessDialogModel m_model;
-        private HashSet<int> m_selectedProcesses;
+        private AttachToWacProcessDialogModel model;
+        private HashSet<int> selectedProcesses;
 
         public AttachToWacProcessDialog(AttachToWacProcessDialogModel model)
         {
-            m_model = model ?? throw new ArgumentNullException(nameof(model));
+            this.model = model ?? throw new ArgumentNullException(nameof(model));
 
-            m_selectedProcesses = new HashSet<int>();
-            model.SelectedProcesses = m_selectedProcesses;
+            selectedProcesses = new HashSet<int>();
+            model.SelectedProcesses = selectedProcesses;
 
-            this.DataContext = m_model;
+            this.DataContext = this.model;
 
             InitializeComponent();
 
@@ -27,11 +27,11 @@
 
         private void Processes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            m_selectedProcesses.UnionWith(e.AddedItems.Cast<WacProcessInfo>().Select(x => x.Id));
+            selectedProcesses.UnionWith(e.AddedItems.Cast<WacProcessInfo>().Select(x => x.Id));
             foreach (var removedItem in e.RemovedItems.Cast<WacProcessInfo>())
-                m_selectedProcesses.Remove(removedItem.Id);
+                selectedProcesses.Remove(removedItem.Id);
 
-            btnOk.IsEnabled = m_selectedProcesses.Count > 0;
+            btnOk.IsEnabled = selectedProcesses.Count > 0;
         }
 
         private void btnOk_Click(object sender, RoutedEventArgs e)
@@ -53,8 +53,8 @@
 
             if (selectedProcessInfo != null)
             {
-                m_selectedProcesses.Clear();
-                m_selectedProcesses.Add(selectedProcessInfo.Id);
+                selectedProcesses.Clear();
+                selectedProcesses.Add(selectedProcessInfo.Id);
 
                 DialogResult = true;
                 Close();
@@ -63,7 +63,7 @@
 
         private void SelectEngines_Click(object sender, RoutedEventArgs e)
         {
-            m_model.DebuggerEngines = m_model.MenuCommands.ShowSelectDebuggerEngineDialog(m_model.DebuggerEngines.Clone());
+            model.DebuggerEngines = model.MenuCommands.ShowSelectDebuggerEngineDialog(model.DebuggerEngines.Clone());
         }
     }
 }

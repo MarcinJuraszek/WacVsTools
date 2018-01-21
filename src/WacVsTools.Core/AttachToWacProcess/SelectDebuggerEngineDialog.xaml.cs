@@ -8,13 +8,13 @@
     /// </summary>
     public partial class SelectDebuggerEngineDialog : Window
     {
-        ISelectDebuggerEngineDialogModel m_model;
+        ISelectDebuggerEngineDialogModel model;
 
         public SelectDebuggerEngineDialog(ISelectDebuggerEngineDialogModel model)
         {
-            m_model = model ?? throw new ArgumentNullException(nameof(model));
+            this.model = model ?? throw new ArgumentNullException(nameof(model));
 
-            DataContext = m_model;
+            DataContext = this.model;
 
             InitializeComponent();
         }

@@ -6,7 +6,7 @@
 
     public class AttachToWacProcessDialogModel : INotifyPropertyChanged
     {
-        private DebuggerEngines m_debuggerEngines;
+        private DebuggerEngines debuggerEngines;
 
         public AttachToWacProcessDialogModel(IMenuCommands menuCommands, IList<WacProcessInfo> processes)
         {
@@ -23,20 +23,20 @@
         {
             get
             {
-                return m_debuggerEngines;
+                return debuggerEngines;
             }
             set
             {
-                if (m_debuggerEngines != value)
+                if (debuggerEngines != value)
                 {
-                    if (m_debuggerEngines != null)
+                    if (debuggerEngines != null)
                     {
-                        m_debuggerEngines.PropertyChanged -= DebuggerEngines_PropertyChanged;
+                        debuggerEngines.PropertyChanged -= DebuggerEngines_PropertyChanged;
                     }
 
-                    m_debuggerEngines = value;
+                    debuggerEngines = value;
 
-                    m_debuggerEngines.PropertyChanged += DebuggerEngines_PropertyChanged;
+                    debuggerEngines.PropertyChanged += DebuggerEngines_PropertyChanged;
 
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(DebuggerEngines)));
                 }

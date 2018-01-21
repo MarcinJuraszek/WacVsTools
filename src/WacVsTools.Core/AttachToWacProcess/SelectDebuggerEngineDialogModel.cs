@@ -23,11 +23,11 @@
         public const string DefaultDebuggerEngineName = @"Managed (v4.6, v4.5, v4.0) code";
         public const string DefaultDebuggerEngineID = @"{FB0D4648-F776-4980-95F8-BB7F36EBC1EE}";
 
-        private static readonly DebuggerEngines s_default = new DebuggerEngines(isLazy: true, isAutomatic: true, manualSelection: new[] { new DebuggerEngine(DefaultDebuggerEngineName, DefaultDebuggerEngineID, isSelected: false) });
+        private static readonly DebuggerEngines LazyDefault = new DebuggerEngines(isLazy: true, isAutomatic: true, manualSelection: new[] { new DebuggerEngine(DefaultDebuggerEngineName, DefaultDebuggerEngineID, isSelected: false) });
 
-        private readonly bool m_isLazy;
-        private bool m_isAutomatic;
-        private readonly IReadOnlyList<DebuggerEngine> m_manualSelection;
+        private readonly bool isLazy;
+        private bool isAutomatic;
+        private readonly IReadOnlyList<DebuggerEngine> manualSelection;
 
         public DebuggerEngines(bool isAutomatic, IList<DebuggerEngine> manualSelection)
             : this(isLazy: false, isAutomatic: isAutomatic, manualSelection: manualSelection)
@@ -36,11 +36,11 @@
 
         private DebuggerEngines(bool isLazy, bool isAutomatic, IList<DebuggerEngine> manualSelection)
         {
-            m_isLazy = isLazy;
-            IsAutomatic = isAutomatic;
-            m_manualSelection = manualSelection?.ToList() ?? throw new ArgumentNullException(nameof(ManualSelection));
+            this.isLazy = isLazy;
+            this.IsAutomatic = isAutomatic;
+            this.manualSelection = manualSelection?.ToList() ?? throw new ArgumentNullException(nameof(ManualSelection));
 
-            foreach (var debuggerEngine in m_manualSelection)
+            foreach (var debuggerEngine in this.manualSelection)
             {
                 debuggerEngine.PropertyChanged += OnChildPropertyChanged;
             }
@@ -51,19 +51,19 @@
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ManualSelection)));
         }
 
-        public static DebuggerEngines DefaultLazy => s_default;
+        public static DebuggerEngines DefaultLazy => LazyDefault;
 
         public bool IsAutomatic
         {
             get
             {
-                return m_isAutomatic;
+                return isAutomatic;
             }
             set
             {
-                if (m_isAutomatic != value)
+                if (isAutomatic != value)
                 {
-                    m_isAutomatic = value;
+                    isAutomatic = value;
 
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAutomatic)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsManual)));
@@ -111,13 +111,13 @@
         {
             get
             {
-                return !m_isAutomatic;
+                return !isAutomatic;
             }
             set
             {
-                if (m_isAutomatic != !value)
+                if (isAutomatic != !value)
                 {
-                    m_isAutomatic = !value;
+                    isAutomatic = !value;
 
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAutomatic)));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsManual)));
@@ -125,11 +125,11 @@
             }
         }
 
-        public bool IsLazy => m_isLazy;
+        public bool IsLazy => isLazy;
 
-        public IReadOnlyList<DebuggerEngine> ManualSelection => m_manualSelection;
+        public IReadOnlyList<DebuggerEngine> ManualSelection => manualSelection;
 
-        public IEnumerable<DebuggerEngine> ManuallySelectedEngines => m_manualSelection.Where(debuggerEngine => debuggerEngine.IsSelected);
+        public IEnumerable<DebuggerEngine> ManuallySelectedEngines => manualSelection.Where(debuggerEngine => debuggerEngine.IsSelected);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -141,16 +141,16 @@
         public DebuggerEngines Clone()
         {
             return new DebuggerEngines(
-                m_isLazy,
-                m_isAutomatic,
-                m_manualSelection
+                isLazy,
+                isAutomatic,
+                manualSelection
                     .Select(debuggerEngine => debuggerEngine.Clone()).ToList());
         }
     }
 
     public sealed class DebuggerEngine : INotifyPropertyChanged, IComparable<DebuggerEngine>
     {
-        private bool m_isSelected;
+        private bool isSelected;
 
         public DebuggerEngine(string name, string id, bool isSelected)
         {
@@ -167,11 +167,11 @@
         {
             get
             {
-                return m_isSelected;
+                return isSelected;
             }
             set
             {
-                m_isSelected = value;
+                isSelected = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
             }
         }
