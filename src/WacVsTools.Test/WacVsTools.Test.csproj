@@ -68,7 +68,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\WacVsTools.Core\WacVsTools.Core.csproj">
+    <ProjectReference Include="..\WacVsTools.Core\WacVsTools.Core.csproj">
       <Project>{b6d87720-d855-4e62-94e5-ec1bc820c727}</Project>
       <Name>WacVsTools.Core</Name>
     </ProjectReference>

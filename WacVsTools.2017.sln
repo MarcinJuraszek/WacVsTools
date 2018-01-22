@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WacVsTools.Core", "src\WacV
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WacVsTools.VS2017", "src\WacVsTools.VS2017\WacVsTools.VS2017.csproj", "{0CB92AF2-18E7-4D31-A27D-7CB599514AE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WacVsTools.Test", "WacVsTools.Test\WacVsTools.Test.csproj", "{A394298C-A036-4B1D-A0FF-6303E0A26CED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WacVsTools.Test", "src\WacVsTools.Test\WacVsTools.Test.csproj", "{A394298C-A036-4B1D-A0FF-6303E0A26CED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
