@@ -1,20 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-
-namespace WacVsTools.Core.AttachToWacProcess
+﻿namespace WacVsTools.Core.AttachToWacProcess
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Controls;
+
     public partial class AttachToWacProcessDialog : Window
     {
-        List<int> selectedProcesses;
+        private AttachToWacProcessDialogModel model;
+        private HashSet<int> selectedProcesses;
 
         public AttachToWacProcessDialog(AttachToWacProcessDialogModel model)
         {
-            selectedProcesses = new List<int>();
+            this.model = model ?? throw new ArgumentNullException(nameof(model));
+
+            selectedProcesses = new HashSet<int>();
             model.SelectedProcesses = selectedProcesses;
 
-            this.DataContext = model;
+            this.DataContext = this.model;
 
             InitializeComponent();
 
@@ -23,7 +27,7 @@ namespace WacVsTools.Core.AttachToWacProcess
 
         private void Processes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedProcesses.AddRange(e.AddedItems.Cast<WacProcessInfo>().Select(x => x.Id));
+            selectedProcesses.UnionWith(e.AddedItems.Cast<WacProcessInfo>().Select(x => x.Id));
             foreach (var removedItem in e.RemovedItems.Cast<WacProcessInfo>())
                 selectedProcesses.Remove(removedItem.Id);
 
@@ -42,19 +46,24 @@ namespace WacVsTools.Core.AttachToWacProcess
             Close();
         }
 
-		private void Processes_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-		{
-			var grid = sender as DataGrid;
-			var selectedProcessInfo = grid.SelectedItem as WacProcessInfo;
+        private void Processes_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var grid = sender as DataGrid;
+            var selectedProcessInfo = grid.SelectedItem as WacProcessInfo;
 
-			if (selectedProcessInfo != null)
-			{
-				selectedProcesses.Clear();
-				selectedProcesses.Add(selectedProcessInfo.Id);
+            if (selectedProcessInfo != null)
+            {
+                selectedProcesses.Clear();
+                selectedProcesses.Add(selectedProcessInfo.Id);
 
-				DialogResult = true;
-				Close();
-			}
-		}
-	}
+                DialogResult = true;
+                Close();
+            }
+        }
+
+        private void SelectEngines_Click(object sender, RoutedEventArgs e)
+        {
+            model.DebuggerEngines = model.MenuCommands.ShowSelectDebuggerEngineDialog(model.DebuggerEngines.Clone());
+        }
+    }
 }

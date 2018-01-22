@@ -48,6 +48,9 @@
     <Reference Include="EnvDTE90, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
+    <Reference Include="EnvDTE90a, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.CommandBars, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -151,6 +154,11 @@
     </Compile>
     <Compile Include="AttachToWacProcess\AttachToWacProcessDialogModel.cs" />
     <Compile Include="AttachToWacProcess\AttachToWacProcessMenuCommands.cs" />
+    <Compile Include="AttachToWacProcess\IMenuCommands.cs" />
+    <Compile Include="AttachToWacProcess\SelectDebuggerEngineDialog.xaml.cs">
+      <DependentUpon>SelectDebuggerEngineDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AttachToWacProcess\SelectDebuggerEngineDialogModel.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="MenuCommandsBase.cs" />
     <Compile Include="PkgCmdID.cs" />
@@ -164,6 +172,14 @@
     <Page Include="AttachToWacProcess\AttachToWacProcessDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AttachToWacProcess\Resources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AttachToWacProcess\SelectDebuggerEngineDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
