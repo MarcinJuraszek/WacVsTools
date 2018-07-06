@@ -61,7 +61,7 @@
 
         private void Execute()
         {
-            var processes = GetWacProcesses();
+            var processes = GetWacProcesses(Environment.MachineName);
             var model = ShowWacProcessesList(processes);
 
             if (model == null || !model.SelectedProcesses.Any())
@@ -90,9 +90,13 @@
             return result.GetValueOrDefault() ? model : null;
         }
 
-        private IEnumerable<WacProcessInfo> GetWacProcesses()
+        private IEnumerable<WacProcessInfo> GetWacProcesses(string computerName)
         {
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("select ProcessId, CommandLine, Name from Win32_Process");
+            ManagementScope scope = new ManagementScope($"\\\\{computerName}\\root\\cimv2");
+            ObjectQuery query = new ObjectQuery("SELECT ProcessId, CommandLine, Name FROM Win32_Process");
+            scope.Connect();
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
             ManagementObjectCollection retObjectCollection = searcher.Get();
 
             var processes = retObjectCollection.Cast<ManagementObject>().Select(x => new
