@@ -90,13 +90,28 @@
             return result.GetValueOrDefault() ? model : null;
         }
 
+        private ObjectQuery WacObjectQuery
+        {
+            get
+            {
+                string formatQuery = @"
+                    SELECT ProcessId, CommandLine, Name
+                    FROM Win32_Process
+                    WHERE
+                        {0}";
+
+                var whereClauses = WacProcessCommandLineToAppNameResolvers.Keys.Select(appName => $"(Name LIKE '%{appName}%')");
+                var query = String.Format(formatQuery, string.Join(" OR\n", whereClauses));
+                return new ObjectQuery(query);
+            }
+        }
+
         private IEnumerable<WacProcessInfo> GetWacProcesses(string computerName)
         {
             ManagementScope scope = new ManagementScope($"\\\\{computerName}\\root\\cimv2");
-            ObjectQuery query = new ObjectQuery("SELECT ProcessId, CommandLine, Name FROM Win32_Process");
             scope.Connect();
 
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, WacObjectQuery);
             ManagementObjectCollection retObjectCollection = searcher.Get();
 
             var processes = retObjectCollection.Cast<ManagementObject>().Select(x => new

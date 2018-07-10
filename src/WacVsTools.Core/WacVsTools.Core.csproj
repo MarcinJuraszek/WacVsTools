@@ -154,6 +154,10 @@
     </Compile>
     <Compile Include="AttachToWacProcess\AttachToWacProcessDialogModel.cs" />
     <Compile Include="AttachToWacProcess\AttachToWacProcessMenuCommands.cs" />
+    <Compile Include="AttachToWacProcess\ConnectionTypeDialog.xaml.cs">
+      <DependentUpon>ConnectionTypeDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AttachToWacProcess\ConnectionTypeDialogModel.cs" />
     <Compile Include="AttachToWacProcess\IMenuCommands.cs" />
     <Compile Include="AttachToWacProcess\SelectDebuggerEngineDialog.xaml.cs">
       <DependentUpon>SelectDebuggerEngineDialog.xaml</DependentUpon>
@@ -170,6 +174,10 @@
   <ItemGroup />
   <ItemGroup>
     <Page Include="AttachToWacProcess\AttachToWacProcessDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="AttachToWacProcess\ConnectionTypeDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
