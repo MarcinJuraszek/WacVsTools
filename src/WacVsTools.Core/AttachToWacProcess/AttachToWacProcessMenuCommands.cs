@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Management;
     using System.Text.RegularExpressions;
-
+    using EnvDTE;
     using EnvDTE80;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
@@ -77,7 +77,8 @@
 
         private void Execute()
         {
-            var processes = GetWacProcesses(Environment.MachineName);
+            var connectionModel = ShowConnectionTypeSelector();
+            var processes = GetWacProcesses(connectionModel.Host);
             var model = ShowWacProcessesList(processes);
 
             if (model == null || !model.SelectedProcesses.Any())
@@ -85,9 +86,20 @@
 
             model.DebuggerEngines.PersistSelectionToRegistry();
 
-            var selectedProcesses = _dte.Debugger.LocalProcesses.Cast<Process2>().Where(p => model.SelectedProcesses.Contains(p.ProcessID));
-            var manuallySelectedDebuggerEngineIds = model.DebuggerEngines.ManuallySelectedEngines.Select(debuggerEngine => debuggerEngine.ID).ToArray();
+            Processes envProcesses;
+            if (connectionModel.Host == Environment.MachineName)
+            {
+                envProcesses = _dte.Debugger.LocalProcesses;
+            }
+            else
+            {
+                Debugger2 debugger = (Debugger2)_dte.Debugger;
+                Transport transport = debugger.Transports.Item("Remote (No Authentication)");
+                envProcesses = debugger.GetProcesses(transport, connectionModel.Host);
+            }
 
+            var manuallySelectedDebuggerEngineIds = model.DebuggerEngines.ManuallySelectedEngines.Select(debuggerEngine => debuggerEngine.ID).ToArray();
+            var selectedProcesses = envProcesses.Cast<Process2>().Where(p => model.SelectedProcesses.Contains(p.ProcessID));
             foreach (var process in selectedProcesses)
             {
                 if (model.DebuggerEngines.IsAutomatic)
@@ -95,6 +107,15 @@
                 else
                     process.Attach2(manuallySelectedDebuggerEngineIds);
             }
+        }
+
+        private ConnectionTypeDialogModel ShowConnectionTypeSelector()
+        {
+            var model = new ConnectionTypeDialogModel();
+            var window = new ConnectionTypeDialog(model);
+            var result = ShowDialog(window);
+
+            return result.GetValueOrDefault() ? model : null;
         }
 
         private AttachToWacProcessDialogModel ShowWacProcessesList(IEnumerable<WacProcessInfo> processes)
