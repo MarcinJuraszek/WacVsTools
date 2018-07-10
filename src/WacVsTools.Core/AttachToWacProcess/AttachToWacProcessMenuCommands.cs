@@ -22,6 +22,22 @@
 #endif
             };
 
+        private ObjectQuery WacObjectQuery
+        {
+            get
+            {
+                string formatQuery = @"
+                    SELECT ProcessId, CommandLine, Name
+                    FROM Win32_Process
+                    WHERE
+                        {0}";
+
+                var whereClauses = WacProcessCommandLineToAppNameResolvers.Keys.Select(appName => $"(Name LIKE '%{appName}%')");
+                var query = String.Format(formatQuery, string.Join(" OR\n", whereClauses));
+                return new ObjectQuery(query);
+            }
+        }
+
         public AttachToWacProcessMenuCommands(DTE2 dte, OleMenuCommandService mcs, IVsUIShell shell)
             : base(dte, mcs, shell)
         {
@@ -90,22 +106,6 @@
             return result.GetValueOrDefault() ? model : null;
         }
 
-        private ObjectQuery WacObjectQuery
-        {
-            get
-            {
-                string formatQuery = @"
-                    SELECT ProcessId, CommandLine, Name
-                    FROM Win32_Process
-                    WHERE
-                        {0}";
-
-                var whereClauses = WacProcessCommandLineToAppNameResolvers.Keys.Select(appName => $"(Name LIKE '%{appName}%')");
-                var query = String.Format(formatQuery, string.Join(" OR\n", whereClauses));
-                return new ObjectQuery(query);
-            }
-        }
-
         private IEnumerable<WacProcessInfo> GetWacProcesses(string computerName)
         {
             ManagementScope scope = new ManagementScope($"\\\\{computerName}\\root\\cimv2");
@@ -123,7 +123,6 @@
 
             var wacProcesses =
                 processes
-                    .Where(g => WacProcessCommandLineToAppNameResolvers.ContainsKey(g.Key))
                     .SelectMany(g =>
                     {
                         var appNameResolver = WacProcessCommandLineToAppNameResolvers[g.Key];
