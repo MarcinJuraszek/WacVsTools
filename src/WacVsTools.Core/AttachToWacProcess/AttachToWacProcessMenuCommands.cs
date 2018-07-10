@@ -95,7 +95,12 @@
             {
                 Debugger2 debugger = (Debugger2)_dte.Debugger;
                 Transport transport = debugger.Transports.Item("Remote (No Authentication)");
-                envProcesses = debugger.GetProcesses(transport, connectionModel.Host);
+                string transportQualifier = connectionModel.Host;
+                if (!string.IsNullOrWhiteSpace(connectionModel.Port))
+                {
+                    transportQualifier += ":" + connectionModel.Port;
+                }
+                envProcesses = debugger.GetProcesses(transport, transportQualifier);
             }
 
             var manuallySelectedDebuggerEngineIds = model.DebuggerEngines.ManuallySelectedEngines.Select(debuggerEngine => debuggerEngine.ID).ToArray();
