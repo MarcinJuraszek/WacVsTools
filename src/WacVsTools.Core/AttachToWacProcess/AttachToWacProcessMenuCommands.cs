@@ -26,15 +26,10 @@
         {
             get
             {
-                string formatQuery = @"
-                    SELECT ProcessId, CommandLine, Name
-                    FROM Win32_Process
-                    WHERE
-                        {0}";
-
-                var whereClauses = WacProcessCommandLineToAppNameResolvers.Keys.Select(appName => $"(Name LIKE '%{appName}%')");
-                var query = String.Format(formatQuery, string.Join(" OR\n", whereClauses));
-                return new ObjectQuery(query);
+                return new SelectQuery(
+                    "Win32_Process",
+                    string.Join(" OR ", WacProcessCommandLineToAppNameResolvers.Keys.Select(appName => $"(Name LIKE '%{appName}%')")),
+                    new string[] { "ProcessId", "CommandLine", "Name" });
             }
         }
 
@@ -134,7 +129,7 @@
 
         private IEnumerable<WacProcessInfo> GetWacProcesses(string computerName)
         {
-            ManagementScope scope = new ManagementScope($"\\\\{computerName}\\root\\cimv2");
+            ManagementScope scope = new ManagementScope($@"\\{computerName}\root\cimv2");
             scope.Connect();
 
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, WacObjectQuery);
