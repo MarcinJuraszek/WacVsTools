@@ -73,6 +73,9 @@
         private void Execute()
         {
             var connectionModel = ShowConnectionTypeSelector();
+            if (connectionModel == null || string.IsNullOrWhiteSpace(connectionModel.Host))
+                return;
+
             var processes = GetWacProcesses(connectionModel.Host);
             var model = ShowWacProcessesList(processes);
 
