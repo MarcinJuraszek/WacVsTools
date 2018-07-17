@@ -6,7 +6,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:UI="clr-namespace:WacVsTools.Core.AttachToWacProcess"
         d:DataContext="{d:DesignInstance Type=UI:SelectDebuggerEngineDialogModelDesignSample, IsDesignTimeCreatable=True}"
-        Title="Select Code Type" Height="250" Width="470" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="FloralWhite">
+        Title="Select Code Type" Height="250" Width="470" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -17,26 +17,8 @@ namespace WacVsTools.Test
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            var connectionModel = new ConnectionTypeDialogModel();
-            var connectionWindow = new ConnectionTypeDialog(connectionModel);
-
-            var processes = new List<WacProcessInfo>()
-            {
-                new WacProcessInfo() { Id = 1, App = "Test", CommandLine = "command line", Name = "Test" },
-            };
-            var model = new AttachToWacProcessDialogModel(new TestMenuCommands(), processes);
+            var model = new AttachToWacProcessDialogModel(new TestMenuCommands());
             var window = new AttachToWacProcessDialog(model);
-
-            bool? result = connectionWindow.ShowDialog();
-
-            if (!result.HasValue || (result.HasValue && !result.Value))
-            {
-                // User Cancelled
-                window.Close();
-                return;
-            }
-
             window.ShowDialog();
         }
     }

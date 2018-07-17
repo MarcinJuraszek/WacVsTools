@@ -4,8 +4,6 @@
     using System.Collections.Generic;
     using System.ComponentModel.Design;
     using System.Linq;
-    using System.Management;
-    using System.Text.RegularExpressions;
     using EnvDTE;
     using EnvDTE80;
     using Microsoft.VisualStudio.Shell;
@@ -13,26 +11,6 @@
 
     public class AttachToWacProcessMenuCommands : MenuCommandsBase, IMenuCommands
     {
-        public Dictionary<string, Func<string, string>> WacProcessCommandLineToAppNameResolvers =
-            new Dictionary<string, Func<string, string>> {
-#if DEBUG
-                { "svchost.exe", (c) => null },
-#else
-                { "w3wp.exe", GetAppNameFromW3wpProcessCommandLine },
-#endif
-            };
-
-        private ObjectQuery WacObjectQuery
-        {
-            get
-            {
-                return new SelectQuery(
-                    "Win32_Process",
-                    string.Join(" OR ", WacProcessCommandLineToAppNameResolvers.Keys.Select(appName => $"(Name LIKE '%{appName}%')")),
-                    new string[] { "ProcessId", "CommandLine", "Name" });
-            }
-        }
-
         public AttachToWacProcessMenuCommands(DTE2 dte, OleMenuCommandService mcs, IVsUIShell shell)
             : base(dte, mcs, shell)
         {
@@ -72,20 +50,14 @@
 
         private void Execute()
         {
-            var connectionModel = ShowConnectionTypeSelector();
-            if (connectionModel == null || string.IsNullOrWhiteSpace(connectionModel.Host))
-                return;
-
-            var processes = GetWacProcesses(connectionModel.Host);
-            var model = ShowWacProcessesList(processes);
-
+            var model = ShowWacProcessesList();
             if (model == null || !model.SelectedProcesses.Any())
                 return;
 
             model.DebuggerEngines.PersistSelectionToRegistry();
 
             Processes envProcesses;
-            if (connectionModel.Host == Environment.MachineName)
+            if (model.Host == Environment.MachineName)
             {
                 envProcesses = _dte.Debugger.LocalProcesses;
             }
@@ -93,10 +65,10 @@
             {
                 Debugger2 debugger = (Debugger2)_dte.Debugger;
                 Transport transport = debugger.Transports.Item("Remote (No Authentication)");
-                string transportQualifier = connectionModel.Host;
-                if (!string.IsNullOrWhiteSpace(connectionModel.Port))
+                string transportQualifier = model.Host;
+                if (!string.IsNullOrWhiteSpace(model.Port))
                 {
-                    transportQualifier += ":" + connectionModel.Port;
+                    transportQualifier += ":" + model.Port;
                 }
                 envProcesses = debugger.GetProcesses(transport, transportQualifier);
             }
@@ -112,66 +84,13 @@
             }
         }
 
-        private ConnectionTypeDialogModel ShowConnectionTypeSelector()
+        private AttachToWacProcessDialogModel ShowWacProcessesList()
         {
-            var model = new ConnectionTypeDialogModel();
-            var window = new ConnectionTypeDialog(model);
-            var result = ShowDialog(window);
-
-            return result.GetValueOrDefault() ? model : null;
-        }
-
-        private AttachToWacProcessDialogModel ShowWacProcessesList(IEnumerable<WacProcessInfo> processes)
-        {
-            var model = new AttachToWacProcessDialogModel(this, processes.ToList());
+            var model = new AttachToWacProcessDialogModel(this);
             var window = new AttachToWacProcessDialog(model);
             var result = ShowDialog(window);
 
             return result.GetValueOrDefault() ? model : null;
-        }
-
-        private IEnumerable<WacProcessInfo> GetWacProcesses(string computerName)
-        {
-            ManagementScope scope = new ManagementScope($@"\\{computerName}\root\cimv2");
-            scope.Connect();
-
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, WacObjectQuery);
-            ManagementObjectCollection retObjectCollection = searcher.Get();
-
-            var processes = retObjectCollection.Cast<ManagementObject>().Select(x => new
-            {
-                Id = (uint)x["ProcessId"],
-                Name = (string)x["Name"],
-                CommandLine = (string)x["CommandLine"]
-            }).ToLookup(x => x.Name);
-
-            var wacProcesses =
-                processes
-                    .SelectMany(g =>
-                    {
-                        var appNameResolver = WacProcessCommandLineToAppNameResolvers[g.Key];
-                        return g.Select(p => new WacProcessInfo()
-                        {
-                            Id = (int)p.Id,
-                            Name = p.Name,
-                            App = appNameResolver(p.CommandLine),
-                            CommandLine = p.CommandLine
-                        });
-                    })
-                    .OrderBy(p => p.Name)
-                    .ThenBy(p => p.App);
-
-            return wacProcesses;
-        }
-
-        private static string GetAppNameFromW3wpProcessCommandLine(string commandLine)
-        {
-            if (string.IsNullOrEmpty(commandLine))
-                return null;
-
-            const string appNamePattern = "-ap \"([^\"]+)\"";
-            var matchResult = Regex.Match(commandLine, appNamePattern);
-            return matchResult.Success ? matchResult.Groups[1].Value : null;
         }
 
         private IList<DebuggerEngine> GetAvailableDebuggerEngines()
