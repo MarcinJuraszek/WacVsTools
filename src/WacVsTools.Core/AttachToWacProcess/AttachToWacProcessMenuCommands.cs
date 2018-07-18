@@ -4,24 +4,13 @@
     using System.Collections.Generic;
     using System.ComponentModel.Design;
     using System.Linq;
-    using System.Management;
-    using System.Text.RegularExpressions;
-
+    using EnvDTE;
     using EnvDTE80;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
 
     public class AttachToWacProcessMenuCommands : MenuCommandsBase, IMenuCommands
     {
-        public Dictionary<string, Func<string, string>> WacProcessCommandLineToAppNameResolvers =
-            new Dictionary<string, Func<string, string>> {
-#if DEBUG
-                { "svchost.exe", (c) => null },
-#else
-                { "w3wp.exe", GetAppNameFromW3wpProcessCommandLine },
-#endif
-            };
-
         public AttachToWacProcessMenuCommands(DTE2 dte, OleMenuCommandService mcs, IVsUIShell shell)
             : base(dte, mcs, shell)
         {
@@ -61,17 +50,31 @@
 
         private void Execute()
         {
-            var processes = GetWacProcesses();
-            var model = ShowWacProcessesList(processes);
-
+            var model = ShowWacProcessesList();
             if (model == null || !model.SelectedProcesses.Any())
                 return;
 
             model.DebuggerEngines.PersistSelectionToRegistry();
 
-            var selectedProcesses = _dte.Debugger.LocalProcesses.Cast<Process2>().Where(p => model.SelectedProcesses.Contains(p.ProcessID));
-            var manuallySelectedDebuggerEngineIds = model.DebuggerEngines.ManuallySelectedEngines.Select(debuggerEngine => debuggerEngine.ID).ToArray();
+            Processes envProcesses;
+            if (model.Host == Environment.MachineName)
+            {
+                envProcesses = _dte.Debugger.LocalProcesses;
+            }
+            else
+            {
+                Debugger2 debugger = (Debugger2)_dte.Debugger;
+                Transport transport = debugger.Transports.Item("Remote (No Authentication)");
+                string transportQualifier = model.Host;
+                if (!string.IsNullOrWhiteSpace(model.Port))
+                {
+                    transportQualifier += ":" + model.Port;
+                }
+                envProcesses = debugger.GetProcesses(transport, transportQualifier);
+            }
 
+            var manuallySelectedDebuggerEngineIds = model.DebuggerEngines.ManuallySelectedEngines.Select(debuggerEngine => debuggerEngine.ID).ToArray();
+            var selectedProcesses = envProcesses.Cast<Process2>().Where(p => model.SelectedProcesses.Contains(p.ProcessID));
             foreach (var process in selectedProcesses)
             {
                 if (model.DebuggerEngines.IsAutomatic)
@@ -81,55 +84,13 @@
             }
         }
 
-        private AttachToWacProcessDialogModel ShowWacProcessesList(IEnumerable<WacProcessInfo> processes)
+        private AttachToWacProcessDialogModel ShowWacProcessesList()
         {
-            var model = new AttachToWacProcessDialogModel(this, processes.ToList());
+            var model = new AttachToWacProcessDialogModel(this);
             var window = new AttachToWacProcessDialog(model);
             var result = ShowDialog(window);
 
             return result.GetValueOrDefault() ? model : null;
-        }
-
-        private IEnumerable<WacProcessInfo> GetWacProcesses()
-        {
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("select ProcessId, CommandLine, Name from Win32_Process");
-            ManagementObjectCollection retObjectCollection = searcher.Get();
-
-            var processes = retObjectCollection.Cast<ManagementObject>().Select(x => new
-            {
-                Id = (uint)x["ProcessId"],
-                Name = (string)x["Name"],
-                CommandLine = (string)x["CommandLine"]
-            }).ToLookup(x => x.Name);
-
-            var wacProcesses =
-                processes
-                    .Where(g => WacProcessCommandLineToAppNameResolvers.ContainsKey(g.Key))
-                    .SelectMany(g =>
-                    {
-                        var appNameResolver = WacProcessCommandLineToAppNameResolvers[g.Key];
-                        return g.Select(p => new WacProcessInfo()
-                        {
-                            Id = (int)p.Id,
-                            Name = p.Name,
-                            App = appNameResolver(p.CommandLine),
-                            CommandLine = p.CommandLine
-                        });
-                    })
-                    .OrderBy(p => p.Name)
-                    .ThenBy(p => p.App);
-
-            return wacProcesses;
-        }
-
-        private static string GetAppNameFromW3wpProcessCommandLine(string commandLine)
-        {
-            if (string.IsNullOrEmpty(commandLine))
-                return null;
-
-            const string appNamePattern = "-ap \"([^\"]+)\"";
-            var matchResult = Regex.Match(commandLine, appNamePattern);
-            return matchResult.Success ? matchResult.Groups[1].Value : null;
         }
 
         private IList<DebuggerEngine> GetAvailableDebuggerEngines()

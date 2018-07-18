@@ -17,13 +17,7 @@ namespace WacVsTools.Test
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
-            var processes = new List<WacProcessInfo>()
-            {
-                new WacProcessInfo() { Id = 1, App = "Test", CommandLine = "command line", Name = "Test" },
-            };
-
-            var model = new AttachToWacProcessDialogModel(new TestMenuCommands(), processes);
+            var model = new AttachToWacProcessDialogModel(new TestMenuCommands());
             var window = new AttachToWacProcessDialog(model);
             window.ShowDialog();
         }
