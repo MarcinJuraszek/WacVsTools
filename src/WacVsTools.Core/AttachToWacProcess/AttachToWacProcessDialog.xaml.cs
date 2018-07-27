@@ -82,17 +82,11 @@
 
         private void ConnectionType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((string)ConnectionType.SelectedItem == "Local Machine")
+            model.SelectedConnectionType = ConnectionType.SelectedItem.ToString();
+
+            if ((string)ConnectionType.SelectedItem == "Default")
             {
-                ConnectionTarget.IsEnabled = false;
                 ConnectionTarget.Text = Environment.MachineName;
-                ConnectionTarget.Background = Background.Clone();
-            }
-            else if ((string)ConnectionType.SelectedItem == "Remote Connection")
-            {
-                ConnectionTarget.IsEnabled = true;
-                ConnectionTarget.Text = String.Empty;
-                ConnectionTarget.Background = Brushes.White;
             }
         }
 

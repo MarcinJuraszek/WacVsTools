@@ -21,14 +21,17 @@
 
         private DebuggerEngines debuggerEngines;
 
-        public AttachToWacProcessDialogModel(IMenuCommands menuCommands)
+        public AttachToWacProcessDialogModel(IMenuCommands menuCommands, IEnumerable<string> connectionTypes)
         {
             MenuCommands = menuCommands ?? throw new ArgumentNullException(nameof(menuCommands));
+            ConnectionTypes = connectionTypes != null ? new ObservableCollection<string>(connectionTypes) : throw new ArgumentNullException(nameof(connectionTypes));
             Processes = new ObservableCollection<WacProcessInfo>();
             DebuggerEngines = DebuggerEngines.DefaultLazy;
         }
 
-        public ObservableCollection<string> ConnectionTypes = new ObservableCollection<string> { "Local Machine", "Remote Connection" };
+        public ObservableCollection<string> ConnectionTypes { get; private set; }
+
+        public string SelectedConnectionType { get; set; }
 
         public string Host { get; set; }
         public string Port { get; set; }
