@@ -17,7 +17,7 @@ namespace WacVsTools.Test
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            var model = new AttachToWacProcessDialogModel(new TestMenuCommands());
+            var model = new AttachToWacProcessDialogModel(new TestMenuCommands(), new string[] { "Default", "Remote Computer" });
             var window = new AttachToWacProcessDialog(model);
             window.ShowDialog();
         }

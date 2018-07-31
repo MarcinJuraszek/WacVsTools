@@ -63,8 +63,8 @@
             }
             else
             {
-                Debugger2 debugger = (Debugger2)_dte.Debugger;
-                Transport transport = debugger.Transports.Item("Remote (No Authentication)");
+                var debugger = (Debugger2)_dte.Debugger;
+                Transport transport = debugger.Transports.Item(model.SelectedConnectionType);
                 string transportQualifier = model.Host;
                 if (!string.IsNullOrWhiteSpace(model.Port))
                 {
@@ -86,7 +86,13 @@
 
         private AttachToWacProcessDialogModel ShowWacProcessesList()
         {
-            var model = new AttachToWacProcessDialogModel(this);
+            var connectionTypes = new List<string>();
+            foreach (Transport transport in ((Debugger2)_dte.Debugger).Transports)
+            {
+                connectionTypes.Add(transport.Name);
+            }
+
+            var model = new AttachToWacProcessDialogModel(this, connectionTypes);
             var window = new AttachToWacProcessDialog(model);
             var result = ShowDialog(window);
 
