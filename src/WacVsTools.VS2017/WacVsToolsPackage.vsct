@@ -30,7 +30,7 @@
     </Bitmaps>
   </Commands>
   <KeyBindings>
-    <KeyBinding guid="guidWacVsToolsCmdSet" id="cmdidAttachToWacProcess" mod1="Control Alt Shift" key1="P" editor="guidVSStd97" />
+    <KeyBinding guid="guidWacVsToolsCmdSet" id="cmdidAttachToWacProcess" mod1="Control Alt Shift" key1="D" editor="guidVSStd97" />
   </KeyBindings>
   <Symbols>
     <!-- This is the package guid. -->
