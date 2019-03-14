@@ -37,6 +37,8 @@
 
             var settingsManager = new ShellSettingsManager(ServiceProvider.GlobalProvider);
             settingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+
+            // CreateCollection method skips over any existing collections, so it's safe to call without checking here.
             settingsStore.CreateCollection(CollectionPath);
         }
 
