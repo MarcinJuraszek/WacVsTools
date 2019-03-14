@@ -7,9 +7,15 @@
     using System.Linq;
     using System.Management;
     using System.Text.RegularExpressions;
+    using Microsoft.VisualStudio.Settings;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Settings;
 
     public class AttachToWacProcessDialogModel : INotifyPropertyChanged
     {
+        private const string CollectionPath = "WacVsToolsSettings";
+        private const string ConnectionTargetSettingName = "ConnectionTarget";
+
         private Dictionary<string, Func<string, string>> WacProcessCommandLineToAppNameResolvers =
            new Dictionary<string, Func<string, string>> {
 #if DEBUG
@@ -20,6 +26,7 @@
            };
 
         private DebuggerEngines debuggerEngines;
+        private WritableSettingsStore settingsStore;
 
         public AttachToWacProcessDialogModel(IMenuCommands menuCommands, IEnumerable<string> connectionTypes)
         {
@@ -27,6 +34,12 @@
             ConnectionTypes = connectionTypes != null ? new ObservableCollection<string>(connectionTypes) : throw new ArgumentNullException(nameof(connectionTypes));
             Processes = new ObservableCollection<WacProcessInfo>();
             DebuggerEngines = DebuggerEngines.DefaultLazy;
+
+            var settingsManager = new ShellSettingsManager(ServiceProvider.GlobalProvider);
+            settingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+
+            // CreateCollection method skips over any existing collections, so it's safe to call without checking here.
+            settingsStore.CreateCollection(CollectionPath);
         }
 
         public ObservableCollection<string> ConnectionTypes { get; private set; }
@@ -55,6 +68,18 @@
             const string appNamePattern = "-ap \"([^\"]+)\"";
             var matchResult = Regex.Match(commandLine, appNamePattern);
             return matchResult.Success ? matchResult.Groups[1].Value : null;
+        }
+
+        internal string ConnectionTargetSetting
+        {
+            get
+            {
+                return this.settingsStore.GetString(CollectionPath, ConnectionTargetSettingName, string.Empty);
+            }
+            set
+            {
+                this.settingsStore.SetString(CollectionPath, ConnectionTargetSettingName, value);
+            }
         }
 
         public ObservableCollection<WacProcessInfo> Processes { get; private set; }

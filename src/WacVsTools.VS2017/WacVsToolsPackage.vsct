@@ -29,6 +29,9 @@
       <Bitmap guid="guidImages" href="Resources\Images.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows"/>
     </Bitmaps>
   </Commands>
+  <KeyBindings>
+    <KeyBinding guid="guidWacVsToolsCmdSet" id="cmdidAttachToWacProcess" mod1="Control Alt Shift" key1="P" editor="guidVSStd97" />
+  </KeyBindings>
   <Symbols>
     <!-- This is the package guid. -->
     <GuidSymbol name="guidWacVsToolsPkg" value="{0809a33e-05bc-4e05-ac32-fe6423441c5e}" />

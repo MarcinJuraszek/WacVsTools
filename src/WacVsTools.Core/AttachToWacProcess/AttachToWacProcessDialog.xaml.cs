@@ -86,7 +86,14 @@
 
             if ((string)ConnectionType.SelectedItem == "Default")
             {
-                ConnectionTarget.Text = Environment.MachineName;
+                if (!string.IsNullOrWhiteSpace(model.ConnectionTargetSetting))
+                {
+                    ConnectionTarget.Text = model.ConnectionTargetSetting;
+                }
+                else
+                {
+                    ConnectionTarget.Text = Environment.MachineName;
+                }
             }
         }
 
@@ -150,6 +157,10 @@
             StatusLight.Fill = validConnection ? Brushes.Green : Brushes.Red;
             btnRefresh.IsEnabled = validConnection;
             NoRecordsError.Visibility = validConnection && model.Processes.Count == 0 ? Visibility.Visible : Visibility.Hidden;
+            if (validConnection)
+            {
+                this.model.ConnectionTargetSetting = ConnectionTarget.Text;
+            }
         }
     }
 
