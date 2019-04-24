@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <Metadata>
+        <Identity Id="WacVsTools.VS2019.Marcin Juraszek.9237d91f-3f1b-4f4f-9693-531ec6ea5125" Version="2.2" Language="en-US" Publisher="Marcin Juraszek" />
+        <DisplayName>WacVsTools.VS2019</DisplayName>
+        <Description xml:space="preserve">WAC Tools for Visual Studio</Description>
+    </Metadata>
+    <Installation AllUsers="true">
+        <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[14.0,17.0]" />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.6,)" />
+        <Dependency Id="Microsoft.VisualStudio.MPF.14.0" DisplayName="Visual Studio MPF 14.0" d:Source="Installed" Version="[14.0,15.0)" />
+    </Dependencies>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.0.28315.86,17.0)" DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.LanguageServices" Version="[16.0.28625.61,17.0)" DisplayName="C# and Visual Basic" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.Compiler" Version="[16.0.28714.129,17.0)" DisplayName="C# and Visual Basic Roslyn compilers" />
+    </Prerequisites>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    </Assets>
+</PackageManifest>
