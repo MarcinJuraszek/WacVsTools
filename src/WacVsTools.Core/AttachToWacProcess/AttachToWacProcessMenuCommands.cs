@@ -41,7 +41,7 @@
             return result ? model.DebuggerEngines : current;
         }
 
-        internal void SetupCommands()
+        public void SetupCommands()
         {
             CommandID command = new CommandID(GuidList.guidWacVsToolsCmdSet, (int)PkgCmdIDList.cmdidAttachToWacProcess);
             MenuCommand menuCommand = new OleMenuCommand((s, e) => Execute(), command);
